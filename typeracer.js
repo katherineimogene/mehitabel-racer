@@ -32,8 +32,12 @@ typeRace = function(e) {
       counter += 1
     } else {
     tempMissed += 1
-    if (tempMissed >= 4) {
-      missedCharDiv.children[1].innerHTML = gameTextArr[counter]
+    if (tempMissed >= 2) {
+      if ( gameTextArr[counter] == " " ) { charHint = "space" }
+      else {
+        charHint = gameTextArr[counter]
+      }
+      missedCharDiv.children[1].innerHTML = charHint
     }
     incorrect += 1
     missedCharDiv.children[0].innerHTML = incorrect
