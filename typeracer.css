@@ -1,0 +1,30 @@
+html {
+  font-family: helvetica, sans-serif;
+  padding-top: 30px;
+  font-size: 2.3em;
+  font-weight: bold;
+  color: #ccc;
+}
+.container {
+  width: 600px;
+  margin: 0 auto;
+}
+
+#game-text{
+  width: 600px;
+  margin: 0 auto;
+}
+.match {
+  color: #2980b9;
+}
+
+#missed-chars{
+  padding-left: 30px;
+  float: left;
+}
+#missed-chars span {
+  color: #e74c3c;
+}
+.charHint {
+ color: #f39c12;
+}
