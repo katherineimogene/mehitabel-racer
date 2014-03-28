@@ -27,15 +27,14 @@ View.prototype = {
   },
 
   isSpace: function(index){
-    return this.gameTextArr[index] == " "
+    return this.expectedChar() == " "
   },
-
 
   showHint: function(index){
     if ( this.isSpace(index) ) {
       charHint = "space"
     } else {
-      charHint = this.gameTextArr[index]
+      charHint = this.expectedChar(index)
     }
     this.missedCharDiv.children[1].innerHTML = charHint
   },
