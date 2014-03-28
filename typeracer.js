@@ -1,9 +1,13 @@
 window.onload=function(){
+  initialize()
+}
+
+var initialize = function(){
   var view = new View()
-  var game = new Game()
-  var controller = new Controller(view,game)
+  var tracker = new Tracker()
+  var game = new Game(view,tracker)
   view.readyDom()
-  document.addEventListener('keydown', function() { controller.keyDownEvent(event) } , false)
+  document.addEventListener('keydown', function() { game.keyDownEvent(event) } , false)
 }
 
 var View = function(){
@@ -52,12 +56,12 @@ View.prototype = {
   }
 }
 
-Controller = function(view,game) {
+Game = function(view,tracker) {
   this.view = view
-  this.game = game
+  this.tracker = tracker
 }
 
-Controller.prototype = {
+Game.prototype = {
 
   captureInput: function(e) {
     return String.fromCharCode(e.keyCode || e.charCode)
@@ -65,26 +69,26 @@ Controller.prototype = {
 
   rightEvent:  function(){
     this.resetMissedChar()
-    this.view.addMatch(this.game.letterIndex)
-    this.game.updateCounter("letterIndex")
+    this.view.addMatch(this.tracker.letterIndex)
+    this.tracker.updateCounter("letterIndex")
   },
 
   resetMissedChar: function(){
-    this.game.tempMissed = 0
+    this.tracker.tempMissed = 0
     this.view.resetMissedCharText()
   },
 
   wrongEvent: function() {
-    this.game.updateCounter("tempMissed")
-    if (this.game.tempMissed >= 2) {
-      this.view.showHint(this.game.letterIndex)
+    this.tracker.updateCounter("tempMissed")
+    if (this.tracker.tempMissed >= 2) {
+      this.view.showHint(this.tracker.letterIndex)
     }
-    this.game.updateCounter("incorrect")
-    this.view.showIncorrect(this.game.incorrect)
+    this.tracker.updateCounter("incorrect")
+    this.view.showIncorrect(this.tracker.incorrect)
   },
 
   correctInput: function(e){
-    return this.captureInput(e).toLowerCase() == this.view.expectedChar(this.game.letterIndex)
+    return this.captureInput(e).toLowerCase() == this.view.expectedChar(this.tracker.letterIndex)
   },
 
   keyDownEvent: function(e) {
@@ -93,13 +97,13 @@ Controller.prototype = {
   }
 }
 
-Game = function() {
+Tracker = function() {
   this.letterIndex = 0
   this.incorrect = 0
   this.tempMissed = 0
 }
 
-Game.prototype = {
+Tracker.prototype = {
   updateCounter: function( type ){
     this[type] += 1
   }
