@@ -1,49 +1,116 @@
 window.onload=function(){
-  gameTextDiv = document.getElementById('game-text')
-  gameText = gameTextDiv.innerText
-  gameTextArr = gameText.split("")
-  readyDom()
-  missedCharDiv = document.getElementById('missed-chars')
+  initialize()
 }
 
-readyDom = function() {
-   gameTextDiv.innerHTML = ""
-  for (i=0; i<gameTextArr.length; i++){
-    newSpan = document.createElement('span')
-    newSpan.innerText = gameTextArr[i]
-    gameTextDiv.appendChild(newSpan)
+var initialize = function(){
+  var view = new View()
+  var tracker = new Tracker()
+  var game = new Game(view,tracker)
+  view.readyDom()
+  document.addEventListener('keydown', function() { game.keyDownEvent(event) } , false)
+}
+
+var View = function(){
+  this.gameTextDiv = document.getElementById('game-text')
+  this.gameText = this.gameTextDiv.innerText
+  this.gameTextArr = this.gameText.split("")
+  this.missedCharDiv = document.getElementById('missed-chars')
+}
+
+View.prototype = {
+  readyDom: function(){
+    this.gameTextDiv.innerHTML = ""
+    for (i=0; i<this.gameTextArr.length; i++){
+      newSpan = document.createElement('span')
+      newSpan.innerText = this.gameTextArr[i]
+      this.gameTextDiv.appendChild(newSpan)
+    }
+  },
+  resetMissedCharText: function(){
+    this.missedCharDiv.children[1].innerHTML = ""
+  },
+
+  isSpace: function(index){
+    return this.expectedChar() == " "
+  },
+
+  showHint: function(index){
+    if ( this.isSpace(index) ) {
+      charHint = "space"
+    } else {
+      charHint = this.expectedChar(index)
+    }
+    this.missedCharDiv.children[1].innerHTML = charHint
+  },
+
+  showIncorrect: function(numIncorrect){
+    this.missedCharDiv.children[0].innerHTML = numIncorrect
+  },
+
+  expectedChar: function(index) {
+    return this.gameTextArr[index]
+  },
+
+  addMatch: function(index){
+      this.gameTextDiv.children[index].classList.add('match')
   }
 }
 
-captureInput = function(e) {
-  return String.fromCharCode(e.keyCode || e.charCode)
+Game = function(view,tracker) {
+  this.view = view
+  this.tracker = tracker
 }
 
-counter = 0
-incorrect = 0
-tempMissed = 0
+Game.prototype = {
 
-typeRace = function(e) {
+  captureInput: function(e) {
+    return String.fromCharCode(e.keyCode || e.charCode)
+  },
+
+  rightEvent:  function(){
+    this.resetMissedChar()
+    this.view.addMatch(this.tracker.letterIndex)
+    this.tracker.updateCounter("letterIndex")
+  },
+
+  resetMissedChar: function(){
+    this.tracker.tempMissed = 0
+    this.view.resetMissedCharText()
+  },
+
+  wrongEvent: function() {
+    this.tracker.updateCounter("tempMissed")
+    if (this.tracker.tempMissed >= 2) {
+      this.view.showHint(this.tracker.letterIndex)
+    }
+    this.tracker.updateCounter("incorrect")
+    this.view.showIncorrect(this.tracker.incorrect)
+  },
+
+  correctInput: function(e){
+    return this.captureInput(e).toLowerCase() == this.view.expectedChar(this.tracker.letterIndex)
+  },
+
+  keyDownEvent: function(e) {
     e.preventDefault()
-    if (captureInput(e).toLowerCase() == gameTextArr[counter].toLowerCase()) {
-      tempMissed = 0
-      missedCharDiv.children[1].innerHTML = ""
-      gameTextDiv.children[counter].classList.add('match')
-      counter += 1
-    } else {
-    tempMissed += 1
-    if (tempMissed >= 2) {
-      if ( gameTextArr[counter] == " " ) { charHint = "space" }
-      else {
-        charHint = gameTextArr[counter]
-      }
-      missedCharDiv.children[1].innerHTML = charHint
-    }
-    incorrect += 1
-    missedCharDiv.children[0].innerHTML = incorrect
-
-    }
+    this.correctInput(e) ? this.rightEvent() : this.wrongEvent()
+  }
 }
 
-document.addEventListener('keydown', function(e){
-  typeRace(e)} , false)
+Tracker = function() {
+  this.letterIndex = 0
+  this.incorrect = 0
+  this.tempMissed = 0
+}
+
+Tracker.prototype = {
+  updateCounter: function( type ){
+    this[type] += 1
+  }
+}
+
+
+
+
+
+
