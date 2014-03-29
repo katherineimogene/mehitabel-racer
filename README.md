@@ -1,6 +1,5 @@
 mehitabel-racer
 ===============
-### Look at the OO branch.
 
 Pull it down, check out a branch, do work.
 
