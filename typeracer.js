@@ -7,6 +7,7 @@ var initialize = function(){
   var tracker = new Tracker()
   var game = new Game(view,tracker)
   view.readyDom()
+  $("html,body").animate({scrollTop: $(document).height()}, 120000);
   document.addEventListener('keydown', function() { game.keyDownEvent(event) } , false)
 }
 
@@ -26,6 +27,7 @@ View.prototype = {
       this.gameTextDiv.appendChild(newSpan)
     }
   },
+
   resetMissedCharText: function(){
     this.missedCharDiv.children[1].innerHTML = ""
   },
@@ -52,7 +54,7 @@ View.prototype = {
   },
 
   addMatch: function(index){
-      this.gameTextDiv.children[index].classList.add('match')
+    this.gameTextDiv.children[index].classList.add('match')
   }
 }
 
@@ -96,7 +98,6 @@ Game.prototype = {
     this.correctInput(e) ? this.rightEvent() : this.wrongEvent()
   }
 }
-
 Tracker = function() {
   this.letterIndex = 0
   this.incorrect = 0
